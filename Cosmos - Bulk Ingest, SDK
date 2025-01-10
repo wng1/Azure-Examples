@@ -1,0 +1,43 @@
+import asyncio
+import uuid
+from faker import Faker
+from azure.cosmos import CosmosClient, PartitionKey
+
+# Cosmos DB connection details
+endpoint = "<cosmos-endpoint>"
+key = "<cosmos-key>"
+
+# Initialize the Cosmos client
+client = CosmosClient(endpoint, key, consistency_level="Session")
+
+# Get the container
+database_name = "cosmicworks"
+container_name = "products"
+container = client.get_database_client(database_name).get_container_client(container_name)
+
+# Generate fake product data
+fake = Faker()
+products_to_insert = [
+    {
+        "id": str(uuid.uuid4()),
+        "name": fake.commerce.product_name(),
+        "price": round(float(fake.commerce.price(min=10, max=1000)), 2),
+        "categoryId": fake.commerce.department(1)
+    }
+    for _ in range(25000)
+]
+
+# Function to insert items into the container
+async def insert_items(container, items):
+    tasks = [
+        container.upsert_item(item, partition_key=item["categoryId"]) for item in items
+    ]
+    await asyncio.gather(*tasks)
+
+# Run the insertion
+async def main():
+    await insert_items(container, products_to_insert)
+    print("Bulk tasks complete")
+
+# Execute the async main function
+asyncio.run(main())
