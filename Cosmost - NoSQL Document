@@ -44,8 +44,8 @@ saddle = Product(
 container.create_item(body=saddle.__dict__)
 
 # Read the product from the container
-product_id = "706cd7c6-db8b-41f9-aea2-0e0c7e8eb009"
-partition_key = "9603ca6c-9e28-4a02-9194-51cdb7fea816"
+product_id = "XXXXXXXXXXXXX"
+partition_key = "XXXXXXXXXXXXXXXX"
 
 try:
     saddle_from_db = container.read_item(item=product_id, partition_key=partition_key)
