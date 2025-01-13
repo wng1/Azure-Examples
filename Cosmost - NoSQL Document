@@ -1,0 +1,62 @@
+from azure.cosmos import CosmosClient, PartitionKey, exceptions
+import uuid
+
+# Cosmos DB endpoint and key
+endpoint = "<cosmos-endpoint>"
+key = "<cosmos-key>"
+
+# Initialize Cosmos client
+client = CosmosClient(endpoint, key)
+
+# Create or get the database
+database_name = "cosmicworks"
+database = client.create_database_if_not_exists(id=database_name)
+
+# Create or get the container
+container_name = "products"
+container = database.create_container_if_not_exists(
+    id=container_name,
+    partition_key=PartitionKey(path="/categoryId"),
+    offer_throughput=400
+)
+
+# Define the Product class
+class Product:
+    def __init__(self, id, categoryId, name, price, tags):
+        self.id = id
+        self.categoryId = categoryId
+        self.name = name
+        self.price = price
+        self.tags = tags
+
+# Create a product
+saddle = Product(
+    id=str(uuid.uuid4()),  # Generate a new unique ID
+    categoryId="9603ca6c-9e28-4a02-9194-51cdb7fea816",
+    name="Road Saddle",
+    price=45.99,
+    tags=["tan", "new", "crisp"]
+)
+
+# Insert the product into the container
+container.create_item(body=saddle.__dict__)
+
+# Read the product from the container
+product_id = "706cd7c6-db8b-41f9-aea2-0e0c7e8eb009"
+partition_key = "9603ca6c-9e28-4a02-9194-51cdb7fea816"
+
+try:
+    saddle_from_db = container.read_item(item=product_id, partition_key=partition_key)
+    print(f"[{saddle_from_db['id']}]\t{saddle_from_db['name']} ({saddle_from_db['price']})")
+except exceptions.CosmosResourceNotFoundError:
+    print(f"Product with id {product_id} not found.")
+
+# Update the product
+saddle_from_db['price'] = 32.55
+saddle_from_db['name'] = "Road LL Saddle"
+
+# Upsert the updated product
+container.upsert_item(body=saddle_from_db)
+
+# Delete the product
+container.delete_item(item=product_id, partition_key=partition_key)
