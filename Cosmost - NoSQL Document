@@ -34,7 +34,7 @@ class Product:
 # Create a product
 saddle = Product(
     id=str(uuid.uuid4()),  # Generate a new unique ID
-    categoryId="9603ca6c-9e28-4a02-9194-51cdb7fea816",
+    categoryId="XXXXXXXXXXXX",
     name="Road Saddle",
     price=45.99,
     tags=["tan", "new", "crisp"]
