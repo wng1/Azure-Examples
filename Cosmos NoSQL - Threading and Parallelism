@@ -1,0 +1,12 @@
+from azure.cosmos import CosmosClient
+
+client = CosmosClient(ENDPOINT, KEY)
+
+database = client.get_database_client(DATABASE)
+container = database.get_container_client(CONTAINER)
+
+query_options = { 
+  "maxItemCount": 500, #Limit items per page
+  "maxConcurrency": 5, #Control parallel execution
+}
+
