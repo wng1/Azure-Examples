@@ -10,3 +10,15 @@ query_options = {
   "maxConcurrency": 5, #Control parallel execution
 }
 
+query = "" #STORED PROCEDURE
+parameters = [{"name": "@categoryId", "value": 2}] 
+
+feed_iterator = container.query_items(
+  query=query,
+  parameters = parameters,
+  enable_cross_partition_query = True,
+  max_item_count = query_options["maxItemCount"]
+)
+
+for item in feed_iterator:
+  print(item)
