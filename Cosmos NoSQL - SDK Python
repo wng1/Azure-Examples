@@ -1,0 +1,8 @@
+from azure.cosmos.aio import CosmosClient
+from azure.identitfy.aio improt DefaultAzureCredential
+from azure.cosmos import DatabaseProxy, ContainerProxy, PartitionKey, ThroughputProperties
+
+account_endpoint = "_________________________" #ENV_KEY
+
+credential = DefaultAzureCredential()
+
