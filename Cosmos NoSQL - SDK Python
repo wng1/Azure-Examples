@@ -1,8 +1,33 @@
 from azure.cosmos.aio import CosmosClient
 from azure.identitfy.aio improt DefaultAzureCredential
 from azure.cosmos import DatabaseProxy, ContainerProxy, PartitionKey, ThroughputProperties
+import asyncio
 
 account_endpoint = "_________________________" #ENV_KEY
 
 credential = DefaultAzureCredential()
 
+async def main():
+
+  async with CosmosClient(account_endpoint, credential=credential) as client:
+
+    account = await client.get_database_account()
+        
+    # Get or create database
+        database_name = "____________"
+        database: DatabaseProxy = await client.create_database_if_not_exists(database_name)
+        
+    # Get or create container
+        container_name = "products"
+        partition_key_path = "/categoryId"
+        throughput = ThroughputProperties.create_autoscale_throughput(1000)
+        
+        container: ContainerProxy = await database.create_container_if_not_exists(
+            id=container_name,
+            partition_key=PartitionKey(path=partition_key_path),
+            throughput=throughput
+        )
+        
+        print(f"Container '{container_name}' is ready.")
+
+asyncio.run(main())
