@@ -1,0 +1,17 @@
+from azure.cosmos import CosmosClient, PartitionKey
+
+endpoint = ENDPOINT
+key = KEY
+database = DATABASE
+container = CONTAINER
+partition_key_path = PARTITION_KEY_PATH
+
+#Simple connection - separate file for API handling
+client = CosmosClient(endpoint, key)
+
+database_name = DATABASE
+database = client.create_database_if_not_exists(database_name)
+
+container_name = container
+partition_key_path = PARTITION_KEY_PATH
+container = database.create_container_if_not_exists(id=container_name, partition_key=PartitionKey(path=partition_key_path))
