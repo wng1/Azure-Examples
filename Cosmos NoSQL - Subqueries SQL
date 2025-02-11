@@ -5,6 +5,7 @@ key = KEY
 database = DATABASE
 container = CONTAINER
 partition_key_path = PARTITION_KEY_PATH
+query_count = QUERY_COUNT
 
 #Simple connection - separate file for API handling
 client = CosmosClient(endpoint, key)
@@ -15,3 +16,10 @@ database = client.create_database_if_not_exists(database_name)
 container_name = container
 partition_key_path = PARTITION_KEY_PATH
 container = database.create_container_if_not_exists(id=container_name, partition_key=PartitionKey(path=partition_key_path))
+
+
+sql = SQL  #parametierised query
+query_count = {"maxItemCount": QUERY_COUNT}
+
+query_iterator = container.query_items(query=sql, enable_cross_partition_query=True, max_item_count=query_options["maxItemCount"])
+
